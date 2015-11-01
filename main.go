@@ -10,5 +10,5 @@ that session, then begin listening for HTTP requests.
 func main() {
 	session := locations.NewSession("locations")
 	server := locations.NewServer(session)
-	server.Martini.Run()
+	server.Run()
 }

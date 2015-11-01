@@ -1,7 +1,7 @@
 package locations
 
 import (
-	"github.com/go-martini/martini"
+	"github.com/gin-gonic/gin"
 	"labix.org/v2/mgo"
 )
 
@@ -22,20 +22,15 @@ func NewSession(name string) *DatabaseSession {
 	return &DatabaseSession{session, name}
 }
 
-/*
-	Martini lets you inject parameters for routing handlers
-	by using `context.Map()`. I'll pass each route handler
-	a instance of an *mgo.Database, so they can
-	get and insert signatures.
+// http://blog.mongodb.org/post/80579086742/running-mongodb-queries-concurrently-with-go
+// Request a socket connection from the session to process our query.
+// Close the session when the goroutine exits and put the connection
+// back
+// into the pool.
+func (session *DatabaseSession) Database(c *gin.Context) {
+	s := session.Clone()
+	defer s.Close()
 
-	For more information, check out:
-	http://blog.gopheracademy.com/day-11-martini
-*/
-func (session *DatabaseSession) Database() martini.Handler {
-	return func(context martini.Context) {
-		s := session.Clone()
-		context.Map(s.DB(session.databaseName))
-		defer s.Close()
-		context.Next()
-	}
+	c.Set("mongo_session", s.DB(session.databaseName))
+	c.Next()
 }

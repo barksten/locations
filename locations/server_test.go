@@ -1,9 +1,8 @@
 package locations_test
 
 import (
-	. "github.com/barksten/locations/locations"
-
 	"encoding/json"
+	. "github.com/barksten/locations/locations"
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
 	"net/http"
@@ -65,12 +64,12 @@ var _ = Describe("Server", func() {
 
 		Context("when no locations exist", func() {
 			It("returns a status code of 200", func() {
-				server.Martini.ServeHTTP(recorder, request)
+				server.ServeHTTP(recorder, request)
 				Expect(recorder.Code).To(Equal(200))
 			})
 
 			It("returns a empty body", func() {
-				server.Martini.ServeHTTP(recorder, request)
+				server.ServeHTTP(recorder, request)
 				Expect(recorder.Body.String()).To(Equal("[]"))
 			})
 		})
